@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind v4 is configured from CSS — there is no tailwind.config.js.
+ *
+ * The tokens below are the Invita identity. They belong to the product landing
+ * page and to the public invitations only; the admin panel stays visually
+ * neutral, so admin components must not reach for them.
+ */
+@theme {
+  --color-forest: #1f3a2e;
+  --color-ivory: #fbf8f2;
+  --color-gold: #b08d57;
+  --color-ink: #1a1a17;
+  --color-sage: #8fa396;
+}
+
+/* Font values come from next/font, so they are inlined instead of re-declared. */
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-fraunces);
+  --font-script: var(--font-script-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
+ * Two situations in which the entrance animations must not hide content:
+ *
+ *  - the visitor asked for reduced motion;
+ *  - the page was delivered without JavaScript, in which case Framer Motion's
+ *    server-rendered `initial` state (an inline opacity of 0) would never be
+ *    replaced and the section would stay invisible.
+ *
+ * The override lives in CSS rather than in `useReducedMotion()` on purpose: that
+ * hook answers differently on the server and in the browser, which makes React
+ * report a hydration mismatch.
+ */
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  [data-reveal],
+  [data-reveal] * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* The hero's ring is kept, but as a quiet static detail. */
+  [data-hero-pulse] {
+    opacity: 0.35 !important;
+    transform: none !important;
+  }
+}

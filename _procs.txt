@@ -1,0 +1,16 @@
+node.exe                     46800 Console                    1      1,948 K
+node.exe                     65528 Console                    1     10,516 K
+node.exe                     66196 Console                    1      2,068 K
+node.exe                     69256 Console                    1      2,956 K
+node.exe                     33192 Console                    1      2,024 K
+node.exe                     70560 Console                    1     62,068 K
+node.exe                     73492 Console                    1      5,804 K
+---LOG-FILE--- 
+ Volume in drive C is OS
+ Volume Serial Number is 86C3-F1C8
+
+ Directory of C:\Users\tinag\OneDrive\Desktop\Personal\Projects\invita-platform
+
+09/23/2026  10:52 PM               390 _final2.log
+               1 File(s)            390 bytes
+               0 Dir(s)  197,853,208,576 bytes free
