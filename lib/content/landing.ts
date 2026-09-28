@@ -12,8 +12,8 @@ import type { PhotoTone } from '@/components/landing/PhotoPlate'
  * image never means editing `Hero.tsx`.
  */
 export const heroMockupPhoto = {
-  src: '/header.jpg',
-  alt: 'Portátil abierto sobre un escritorio de madera, con una invitación de boda digital y su papelería impresa en pantalla',
+  src: '/header.png',
+  alt: 'Portátil abierto sobre un escritorio de madera con la invitación digital de Sofía y Mateo en pantalla',
 } as const
 
 export const navLinks = [
