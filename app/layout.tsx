@@ -34,16 +34,18 @@ const editorialFont = Newsreader({
  * Metadata for the whole app (the landing overrides title/description in
  * `app/page.tsx`).
  *
- * No `icons` entry on purpose: the favicon is served through Next's file
- * convention from `app/favicon.ico` — a real multi-size icon (16/32/48 BMP plus
- * a 256 PNG frame) — so Next emits the `<link rel="icon">` itself. Never point
- * `icons` at a file that is not there: the browser 404s on it instead of falling
- * back to the favicon, which is how this page ended up with four dead icon
- * links. To extend the set later, drop the file next to the favicon and Next
- * picks it up with no config: `app/icon.svg` (scalable, any screen density) or
- * `app/apple-icon.png` (180×180, iOS home screen).
- * `public/invita-logo.png` is the exported brand mark, not an icon: it is a
- * 1254×1254 / 957 kB PNG, so never reuse it as one.
+ * No `icons` entry on purpose: every icon is served through Next's file
+ * convention, so Next emits the `<link>` tags itself. `app/favicon.ico` is a real
+ * multi-size icon — PNG frames at 16/32/48/64/128/256 — and `app/icon.png`
+ * (512×512) plus `app/apple-icon.png` (180×180, iOS home screen) sit next to it.
+ * Never point `icons` at a file that is not there: the browser 404s on it instead
+ * of falling back to the favicon, which is how a previous version of this page
+ * ended up with four dead icon links. To extend the set, drop the file next to
+ * the favicon and Next picks it up with no config (`app/icon.svg` for a scalable
+ * option).
+ * `public/invita-logo.png` is the exported brand mark the three icons were drawn
+ * from, not an icon itself: it is a 1254×1254 / 957 kB PNG, so never reuse it as
+ * one.
  */
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
