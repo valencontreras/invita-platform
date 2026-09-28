@@ -68,7 +68,7 @@ lib/content/landing.ts                todo el copy en español
 lib/content/site.ts                   nombre, URLs de contacto y enlace de WhatsApp
 public/examples/*.jpg                 fotos de muestra de las tarjetas
 public/pre-wedding/*.jpg              fotos de la tira de la tarjeta «Qué incluye»
-public/header.jpg                     imagen de la maqueta de la portada
+public/header.png                     imagen de la maqueta de la portada
 
 ```
 
@@ -78,7 +78,7 @@ Los ejemplos de la colección solo enlazan a `/<slug>` cuando la invitación est
 
 Los enlaces internos van con `<Link>` de `next/link` (por ejemplo, la tarjeta de la colección hacia `/<slug>`): así la navegación se mantiene del lado del cliente y Next puede precargar la ruta. Un `<a>` normal queda reservado para lo que el router no gobierna: anclas dentro de la misma página (`#coleccion`, `#cotizar`), enlaces externos que abren en otra pestaña (`wa.me`, Instagram, con `target="_blank" rel="noopener noreferrer"`) y esquemas que no son HTTP (`mailto:`).
 
-La maqueta de la portada usa `public/header.jpg`, declarada como `heroMockupPhoto` en `lib/content/landing.ts`. El original es 16:9 y el marco de la tarjeta es vertical, así que `object-cover` recorta los lados: cuando haya una foto real, conviene que venga en 4:5 o más alta.
+La maqueta de la portada usa `public/header.png` (1678×937, el 16:9 de la sesión real de «Sofía y Mateo»), declarada como `heroMockupPhoto` en `lib/content/landing.ts`. El marco de la tarjeta es vertical, así que `object-cover` recorta los lados. Ojo con el peso: `next.config.mjs` deja `images.unoptimized` en `true`, o sea que el archivo se sirve tal cual, y este PNG pesa 1,8 MB; un JPEG de las mismas medidas bajaría a unas seis veces menos sin diferencia visible a ese tamaño, que es lo que conviene antes de publicar.
 
 La tarjeta «Galería editorial de la preboda» de `components/landing/WhatsIncluded.tsx` cierra con tres fotos reales, tomadas de `public/pre-wedding/` a través de `preWeddingPhotos` en `lib/content/landing.ts` (mismo formato `{ src, alt }` que las tarjetas de la colección). El orden del arreglo es el orden en pantalla. Los originales actuales son 512×286 (16:9) y `object-cover` los recorta al marco de la tira; para las próximas fotos conviene una proporción cercana a la del marco, así no se pierde encuadre.
 
@@ -86,9 +86,9 @@ Cada tarjeta «Qué incluye» cierra con una muestra estática de la invitación
 
 ## Favicon e iconos
 
-El favicon vive en `app/favicon.ico` y Next lo emite solo (convención de archivos): es un `.ico` real con frames de 16×16, 32×32, 48×48 y 256×256, así que el navegador elige el tamaño que necesita. Si más adelante quieres añadir un icono vectorial o el de iOS, basta con colocar `app/icon.svg` o `app/apple-icon.png` (180×180) junto al favicon: Next los detecta sin configuración.
+Los iconos van por la convención de archivos de Next, sin `metadata.icons`: `app/favicon.ico` (frames PNG de 16×16, 32×32, 48×48, 64×64, 128×128 y 256×256, cada uno con su esquina redondeada recortada), `app/icon.png` (512×512) y `app/apple-icon.png` (180×180, pantalla de inicio de iOS). Los tres se generaron a partir de `public/invita-logo.png` y los emite Next solo: el navegador elige el tamaño que necesita y `app/layout.tsx` no declara nada.
 
-No declares `icons` en la `metadata` apuntando a archivos que no existan: ese `<link>` da 404 y el navegador puede preferirlo por encima del favicon real. Los logos y fotos para usar dentro de las páginas van en `public/`.
+No declares `icons` en la `metadata` apuntando a archivos que no existan: ese `<link>` da 404 y el navegador puede preferirlo por encima del favicon real. Los logos y fotos para usar dentro de las páginas van en `public/`. El favicon tampoco va en la raíz del proyecto: Next solo sirve los iconos de `app/` (o de `public/`), así que uno en la raíz no cambia nada y solo confunde.
 
 ## Estado
 

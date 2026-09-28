@@ -46,7 +46,7 @@ Use these tokens **only** on the product landing page and public invitation page
 - Explicitly avoid: cream+terracotta gradient backgrounds, rounded cards with identical generic gray drop shadows, uppercase eyebrow labels stacked above every single heading
 - Tokens live in `app/globals.css` under `@theme`, namespaced (`forest`/`ivory`/`paper`/`gold`/`sage`/`ink`/`wine`/`line`) so they can never shadow the neutral shadcn/ui palette the admin relies on. Fonts are wired through `next/font` in `app/layout.tsx` (`font-display`, `font-editorial`, `font-body`). Reusable utilities defined there: `gold-foil-border`, `botanical-glow`, `paper-texture`, `hairline-gold`. The type scale and the `text-label-caps` style also come from `@theme`. The only self-running animation is the `--animate-seal-glow` token (used as `motion-safe:animate-seal-glow motion-reduce:animate-none`) on the hero's wax-seal mockup
 - The eyebrow-over-heading pattern is allowed, but never centred and identical on every section — vary alignments and skip it where the composition does not need it
-- Favicon and app icons come from Next's **file convention**, not from `metadata.icons`: `app/favicon.ico` is the real multi-size icon (16/32/48/256) and Next emits the `<link rel="icon">` itself. Drop `app/icon.svg` or `app/apple-icon.png` next to it to extend the set. Never declare `metadata.icons` entries pointing at files that do not exist — the browser 404s on that link instead of falling back to the favicon
+- Favicon and app icons come from Next's **file convention**, not from `metadata.icons`: `app/favicon.ico` is the real multi-size icon (PNG frames at 16/32/48/64/128/256), `app/icon.png` (512×512) and `app/apple-icon.png` (180×180) sit next to it, and Next emits every `<link rel="icon">` itself — all three are drawn from the brand mark `public/invita-logo.png`. Never declare `metadata.icons` entries pointing at files that do not exist — the browser 404s on that link instead of falling back to the favicon
 
 ## Data model
 
@@ -94,7 +94,7 @@ app/api/invitations/[slug]/route.ts   GET — public invitation data by slug
 
 - Every card in `WhatsIncluded` closes with a static still of the real invitation (`SAMPLE_UI`), which is decorative and therefore wrapped in `aria-hidden` by `BenefitCard`. The music card's still mirrors the invitation's audio player — forest play button, track name, elapsed time and the gold waveform — matching the `Música sutil y personalizada` copy. Those short Spanish labels stay in the component on purpose: they describe product UI, not page copy.
 
-- Hero mockup artwork is `public/header.jpg`, declared as `heroMockupPhoto` in the same content module (path + Spanish `alt`); `Hero` renders it with `next/image` (`fill` + `object-cover` + `priority`), so the 16:9 original is cropped to the card's portrait frame and the `Sofía & Mateo` demo overlay sits on the forest gradient over it.
+- Hero mockup artwork is `public/header.png`, declared as `heroMockupPhoto` in the same content module (path + Spanish `alt`); `Hero` renders it with `next/image` (`fill` + `object-cover` + `priority`), so the 16:9 original is cropped to the card's portrait frame and the `Sofía & Mateo` demo overlay sits on the forest gradient over it.
 
 - `Testimonials` renders `null` while `testimonials` is empty — never invent social proof; add real quotes to `lib/content/landing.ts` to turn the section on.
 
