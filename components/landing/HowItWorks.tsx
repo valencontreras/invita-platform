@@ -1,37 +1,64 @@
-import { howItWorks } from "@/lib/content/landing";
-import { Reveal } from "./Reveal";
+import { Reveal } from '@/components/landing/Reveal'
+import { SectionHeading } from '@/components/landing/SectionHeading'
+import { STEP_ICONS } from '@/components/landing/icons'
+import { howItWorks } from '@/lib/content/landing'
+import { cn } from '@/lib/utils'
 
 /**
- * Steps arrive from the side instead of the bottom, which keeps the page from
- * repeating the same entrance on every section.
+ * The three steps, told left to right on a hairline.
+ *
+ * Icons are resolved by position from `STEP_ICONS`, so the copy in
+ * `lib/content/landing.ts` never has to mention a glyph.
  */
 export function HowItWorks() {
   return (
-    <section className="bg-forest px-6 py-20 text-ivory sm:px-10 sm:py-28">
-      <div className="mx-auto w-full max-w-6xl">
-        <Reveal>
-          <h2 className="font-display text-3xl leading-tight sm:text-4xl">
-            Así se hace, en tres pasos
-          </h2>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-sage">
-            Tú te encargas de la boda. De la invitación nos encargamos nosotros.
-          </p>
-        </Reveal>
+    <section id="como-funciona" className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-24">
+      <SectionHeading
+        align="start"
+        eyebrow="Un proceso sin estrés"
+        title="Tu invitación lista en 3 pasos"
+        description="Nos encargamos de toda la parte técnica para que tú solo disfrutes organizando la boda."
+        className="mb-16 md:mb-20"
+      />
 
-        <div className="mt-14 grid gap-10 sm:grid-cols-3 sm:gap-8">
-          {howItWorks.map((step, index) => (
-            <Reveal key={step.title} direction="right" delay={index * 0.15}>
-              <div className="border-t border-gold/40 pt-6">
-                <span className="font-display text-4xl text-gold">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-4 font-display text-xl">{step.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-sage">{step.description}</p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+      <div className="relative">
+        <span
+          aria-hidden
+          className="hairline-gold absolute top-12 right-[18%] left-[18%] hidden h-px lg:block"
+        />
+
+        <ol className="relative grid grid-cols-1 gap-12 lg:grid-cols-3">
+          {howItWorks.map((step, index) => {
+            const Icon = STEP_ICONS[index] ?? STEP_ICONS[0]
+            const isLast = index === howItWorks.length - 1
+
+            return (
+              <li key={step.title}>
+                <Reveal
+                  className="flex h-full flex-col items-center gap-4 text-center"
+                  delay={index * 110}
+                >
+                  <span
+                    className={cn(
+                      'flex size-24 items-center justify-center rounded-full',
+                      isLast
+                        ? 'botanical-glow bg-forest-soft text-ivory'
+                        : 'gold-foil-border bg-white text-forest',
+                    )}
+                  >
+                    <Icon className="size-8" strokeWidth={1.25} />
+                  </span>
+                  <span className="text-label-caps text-gold-deep/60 uppercase">
+                    Paso 0{index + 1}
+                  </span>
+                  <h3 className="font-display text-headline-md text-forest">{step.title}</h3>
+                  <p className="max-w-sm text-body-md text-ink-soft">{step.description}</p>
+                </Reveal>
+              </li>
+            )
+          })}
+        </ol>
       </div>
     </section>
-  );
+  )
 }

@@ -1,20 +1,15 @@
-/*
- * Shared button styles. Corners stay square and shadows are avoided on purpose:
- * the brief rules out rounded cards with the generic gray shadow of template
- * sites, and this is the same idea applied to the calls to action.
+/**
+ * Shared call-to-action styles.
  *
- * Note: tailwind-merge is not part of the stack, so these class lists are meant
- * to be used as-is without appending conflicting utilities.
+ * Kept in one place so every button on the landing page (`/`) stays in sync and
+ * the aged-gold folio treatment is applied consistently.
  */
 
-/** Filled gold button — the main call to action on dark surfaces. */
-export const ctaPrimary =
-  "inline-flex w-full items-center justify-center gap-2.5 bg-gold px-7 py-3.5 font-display text-[0.95rem] tracking-wide text-ink transition-colors duration-200 hover:bg-ivory focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:w-auto";
+export const buttonPrimary =
+  "inline-flex items-center justify-center gap-3 rounded-lg border border-gold-soft/50 bg-forest-soft px-7 py-4 text-label-caps text-ivory uppercase transition-colors hover:bg-forest focus-visible:ring-2 focus-visible:ring-gold/40 focus-visible:outline-none active:scale-[0.99] text-sm";
 
-/** Same button on light surfaces, where gold on ivory would not have contrast. */
-export const ctaPrimaryOnLight =
-  "inline-flex w-full items-center justify-center gap-2.5 bg-forest px-7 py-3.5 font-display text-[0.95rem] tracking-wide text-ivory transition-colors duration-200 hover:bg-forest/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest sm:w-auto";
+export const buttonOutline =
+  "inline-flex items-center justify-center gap-2 rounded-lg border border-line/70 px-7 py-4 text-label-caps text-forest uppercase transition-colors hover:border-gold hover:bg-white focus-visible:ring-2 focus-visible:ring-gold/30 focus-visible:outline-none text-sm";
 
-/** Quiet secondary action. */
-export const ctaGhost =
-  "inline-flex w-full items-center justify-center border border-ivory/35 px-7 py-3.5 font-display text-[0.95rem] tracking-wide text-ivory transition-colors duration-200 hover:border-gold hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold sm:w-auto";
+export const buttonGhost =
+  "inline-flex items-center justify-center gap-2 rounded-lg border border-line/60 px-5 py-3 text-label-caps text-forest uppercase transition-colors hover:bg-white focus-visible:ring-2 focus-visible:ring-gold/30 focus-visible:outline-none text-sm";

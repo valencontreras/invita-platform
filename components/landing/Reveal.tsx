@@ -1,56 +1,70 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
-type Direction = "up" | "left" | "right";
-
-const DISTANCE = 28;
-
-const offsets: Record<Direction, { x: number; y: number }> = {
-  up: { x: 0, y: DISTANCE },
-  left: { x: -DISTANCE, y: 0 },
-  right: { x: DISTANCE, y: 0 },
-};
+import { cn } from '@/lib/utils'
 
 type RevealProps = {
-  children: ReactNode;
-  className?: string;
-  /** Where the element travels from as it enters the viewport. */
-  direction?: Direction;
-  /** Seconds of delay, used to stagger siblings. */
-  delay?: number;
-  /** Fraction of the element that must be visible before it animates. */
-  amount?: number;
-};
+  children: ReactNode
+  /** Stagger for siblings inside the same grid/row (ms). */
+  delay?: number
+  className?: string
+  /** Vertical offset before the element enters the viewport (px). */
+  distance?: number
+}
 
 /**
- * Scroll-triggered entrance, once per element.
+ * Scroll-triggered reveal used across the landing page.
  *
- * Reduced motion is handled in `globals.css`, through the `[data-reveal]` rule,
- * instead of with `useReducedMotion()`. That hook returns `false` while the page
- * is rendered on the server and the real value in the browser, so branching on
- * it produced different markup on each side and React reported a hydration
- * mismatch. The CSS rule also keeps the content visible when JavaScript never
- * runs, since the entrance starts from an inline `opacity: 0`.
+ * Motion principle (see AGENTS.md): the hero's wax-seal glow is the only moment
+ * that animates on its own; everything else waits for the user to scroll.
+ * `prefers-reduced-motion` is honoured by simply rendering the final state.
  */
-export function Reveal({
-  children,
-  className,
-  direction = "up",
-  delay = 0,
-  amount = 0.3,
-}: RevealProps) {
+export function Reveal({ children, delay = 0, className, distance = 24 }: RevealProps) {
+  const elementRef = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const element = elementRef.current
+    if (!element) return
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion || typeof IntersectionObserver === 'undefined') {
+      setVisible(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setVisible(true)
+            observer.disconnect()
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+    )
+
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <motion.div
-      data-reveal
-      className={className}
-      initial={{ opacity: 0, ...offsets[direction] }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, amount }}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={elementRef}
+      className={cn(
+        'transition-[opacity,transform] duration-700 ease-out will-change-[opacity,transform]',
+        visible ? 'translate-y-0 opacity-100' : 'opacity-0',
+        className,
+      )}
+      style={
+        visible
+          ? { transitionDelay: `${delay}ms` }
+          : { transform: `translateY(${distance}px)`, transitionDelay: `${delay}ms` }
+      }
     >
       {children}
-    </motion.div>
-  );
+    </div>
+  )
 }

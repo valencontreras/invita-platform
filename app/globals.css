@@ -1,55 +1,137 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
-/*
- * Tailwind v4 is configured from CSS — there is no tailwind.config.js.
- *
- * The tokens below are the Invita identity. They belong to the product landing
- * page and to the public invitations only; the admin panel stays visually
- * neutral, so admin components must not reach for them.
- */
+/* =============================================================================
+   "Botanical Heirloom" — design tokens for the product landing page (`/`) and
+   the public invitation pages (`/[slug]`).
+
+   Every token is namespaced (forest / ivory / paper / gold / sage / ink / wine /
+   line) so it can never shadow the neutral shadcn/ui palette that `components/ui`
+   and the admin panel rely on. The admin panel keeps shadcn defaults on purpose
+   (see AGENTS.md › Design system).
+   ========================================================================== */
 @theme {
-  --color-forest: #1f3a2e;
-  --color-ivory: #fbf8f2;
+  /* --- Palette ------------------------------------------------------------- */
+  --color-forest: #082419;
+  --color-forest-soft: #1f3a2e;
+  --color-ivory: #fcf9f3;
+  --color-paper: #f6f3ed;
+  --color-paper-deep: #efebe1;
+  --color-sage: #506357;
+  --color-sage-light: #86a494;
+  --color-sage-soft: #d3e8d9;
   --color-gold: #b08d57;
-  --color-ink: #1a1a17;
-  --color-sage: #8fa396;
+  --color-gold-soft: #c9a96e;
+  --color-gold-deep: #2d1c00;
+  --color-wine: #722f37;
+  --color-ink: #1c1c18;
+  --color-ink-soft: #4d564f;
+  --color-line: #c6c9bd;
+  --color-line-strong: #7b837b;
+
+  /* --- Type families (wired to next/font in app/layout.tsx) ---------------- */
+  --font-display: var(--font-eb-garamond), Georgia, 'Times New Roman', serif;
+  --font-editorial: var(--font-newsreader), Georgia, serif;
+  --font-body: var(--font-inter), system-ui, -apple-system, sans-serif;
+
+  /* --- Type scale ---------------------------------------------------------- */
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 1.02;
+  --text-display-lg--letter-spacing: -0.03em;
+  --text-display-md: 2.75rem;
+  --text-display-md--line-height: 1.06;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 1.15;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-md: 1.625rem;
+  --text-headline-md--line-height: 1.25;
+  --text-headline-sm: 1.25rem;
+  --text-headline-sm--line-height: 1.35;
+  --text-body-lg: 1.0625rem;
+  --text-body-lg--line-height: 1.75;
+  --text-body-md: 0.9375rem;
+  --text-body-md--line-height: 1.65;
+  --text-body-sm: 0.8125rem;
+  --text-body-sm--line-height: 1.55;
+  --text-label-caps: 0.6875rem;
+  --text-label-caps--line-height: 1rem;
+  --text-label-caps--letter-spacing: 0.15em;
+
+  /* --- Motion -------------------------------------------------------------- */
+  /* Single auto-playing moment on the page: the hero's wax-seal glow. */
+  --animate-seal-glow: seal-glow 9s ease-in-out infinite;
 }
 
-/* Font values come from next/font, so they are inlined instead of re-declared. */
-@theme inline {
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-fraunces);
-  --font-script: var(--font-script-accent);
+@keyframes seal-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@layer base {
   html {
     scroll-behavior: smooth;
   }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 400;
+  }
+
+  ::selection {
+    background-color: var(--color-sage-soft);
+    color: var(--color-forest);
+  }
 }
 
-/*
- * Two situations in which the entrance animations must not hide content:
- *
- *  - the visitor asked for reduced motion;
- *  - the page was delivered without JavaScript, in which case Framer Motion's
- *    server-rendered `initial` state (an inline opacity of 0) would never be
- *    replaced and the section would stay invisible.
- *
- * The override lives in CSS rather than in `useReducedMotion()` on purpose: that
- * hook answers differently on the server and in the browser, which makes React
- * report a hydration mismatch.
- */
-@media (prefers-reduced-motion: reduce), (scripting: none) {
-  [data-reveal],
-  [data-reveal] * {
-    opacity: 1 !important;
-    transform: none !important;
-  }
+/* Aged-gold hairline + soft botanical shadow. Used on every elevated card so
+   the page never falls back to identical generic gray drop shadows. */
+@utility gold-foil-border {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 38%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-gold-soft) 22%, transparent),
+    0 18px 40px -28px color-mix(in srgb, var(--color-forest) 30%, transparent);
+}
 
-  /* The hero's ring is kept, but as a quiet static detail. */
-  [data-hero-pulse] {
-    opacity: 0.35 !important;
-    transform: none !important;
-  }
+@utility botanical-glow {
+  box-shadow:
+    0 18px 45px -20px color-mix(in srgb, var(--color-forest-soft) 45%, transparent),
+    0 4px 18px -6px color-mix(in srgb, var(--color-gold) 22%, transparent);
+}
+
+/* Ivory stationery grain that sits behind the whole landing page. */
+@utility paper-texture {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-gold) 9%, transparent) 1px,
+    transparent 0
+  );
+  background-size: 25px 25px;
+}
+
+/* Fading 1px divider used to link the numbered steps. */
+@utility hairline-gold {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-gold) 55%, transparent),
+    transparent
+  );
 }

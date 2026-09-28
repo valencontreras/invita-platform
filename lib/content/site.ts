@@ -1,28 +1,44 @@
-/*
- * Business contact details, used by the landing page, the quote form and the
- * footer. They are read from env vars so the same code works locally, in
- * preview and in production without edits.
+/**
+ * Site-wide constants and contact details for public-facing surfaces.
  *
- * TODO: define the real values in `.env.local` (and in Vercel) — the fallbacks
- * below are placeholders so the page still renders before launch.
+ * Everything here is read at build time from `NEXT_PUBLIC_*` variables (see
+ * `.env.example`). Optional values stay `undefined` when unset so the UI can
+ * simply hide the corresponding link instead of rendering a dead one.
  */
 
-function envOr(value: string | undefined, fallback: string): string {
-  const trimmed = value?.trim();
-  return trimmed && trimmed.length > 0 ? trimmed : fallback;
+/** Accepts `invita.app` or `https://invita.app` and always returns a full URL. */
+function resolveSiteUrl(): string {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!raw) return "http://localhost:3000";
+  return raw.startsWith("http://") || raw.startsWith("https://")
+    ? raw
+    : `https://${raw}`;
 }
 
-export const siteConfig = {
+/** International format, digits only (e.g. `5215512345678`). */
+const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(
+  /\D/g,
+  "",
+);
+
+export const site = {
   name: "Invita",
-  /** International format, digits only: 58 + operator code + number. */
-  whatsappNumber: envOr(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER, "580000000000"),
-  contactEmail: envOr(process.env.NEXT_PUBLIC_CONTACT_EMAIL, "hola@invita.com"),
-  instagramUrl: envOr(process.env.NEXT_PUBLIC_INSTAGRAM_URL, "https://instagram.com/invita"),
-  country: "Venezuela",
+  tagline: "Invitaciones digitales interactivas para bodas inolvidables",
+  url: resolveSiteUrl(),
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || undefined,
+  instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim() || undefined,
 } as const;
 
-/** Deep link to WhatsApp with a pre-filled message, the main CTA of the site. */
-export function whatsappLink(message: string): string {
-  const digits = siteConfig.whatsappNumber.replace(/\D/g, "");
-  return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
-}
+/** Pre-filled first message so the owner sees the intent before answering. */
+const WHATSAPP_MESSAGE =
+  "¡Hola! Nos casamos y quisiéramos cotizar la invitación digital de nuestra boda.";
+
+/**
+ * WhatsApp deep link for every "converse with us" call to action.
+ *
+ * Falls back to the on-page quote form (`#cotizar`) when the number is not
+ * configured, so a CTA never dead-ends in a broken `wa.me` link.
+ */
+export const whatsappUrl = whatsappNumber
+  ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
+  : "#cotizar";

@@ -1,45 +1,77 @@
-import type { Metadata } from "next";
-import { Fraunces, Inter, Mrs_Saint_Delafield } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import type { Metadata, Viewport } from "next";
+import { EB_Garamond, Inter, Newsreader } from "next/font/google";
+
+import { site } from "@/lib/content/site";
+
 import "./globals.css";
 
-const inter = Inter({
+/**
+ * "Botanical Heirloom" typography, self-hosted through next/font so the browser
+ * makes no external font request: EB Garamond for display, Newsreader italic for
+ * editorial accents, Inter for body and UI copy.
+ */
+const displayFont = EB_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-eb-garamond",
+});
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  display: "swap",
   variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
 });
 
-// Display face for headings on the landing page and the public invitations.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const editorialFont = Newsreader({
   subsets: ["latin"],
+  style: ["normal", "italic"],
   display: "swap",
+  variable: "--font-newsreader",
 });
 
-// Calligraphic accent, reserved for couple names. Never used for UI copy.
-const script = Mrs_Saint_Delafield({
-  variable: "--font-script-accent",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
+/**
+ * Metadata for the whole app (the landing overrides title/description in
+ * `app/page.tsx`).
+ *
+ * No `icons` entry on purpose: the favicon is served through Next's file
+ * convention from `app/favicon.ico` — a real multi-size icon (16/32/48 BMP plus
+ * a 256 PNG frame) — so Next emits the `<link rel="icon">` itself. Never point
+ * `icons` at a file that is not there: the browser 404s on it instead of falling
+ * back to the favicon, which is how this page ended up with four dead icon
+ * links. To extend the set later, drop the file next to the favicon and Next
+ * picks it up with no config: `app/icon.svg` (scalable, any screen density) or
+ * `app/apple-icon.png` (180×180, iOS home screen).
+ * `public/invita-logo.png` is the exported brand mark, not an icon: it is a
+ * 1254×1254 / 957 kB PNG, so never reuse it as one.
+ */
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: {
-    default: "Invita | Invitaciones de boda digitales",
-    template: "%s | Invita",
-  },
+  metadataBase: new URL(site.url),
+  title: "Invita | Invitaciones digitales interactivas para bodas inolvidables",
   description:
-    "Invitaciones de boda digitales: una página propia para su boda, confirmación de asistencia en línea y panel de invitados.",
+    "Invitaciones digitales interactivas diseñadas a mano para bodas inolvidables: música, mapas, cuenta regresiva y confirmaciones RSVP en vivo.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/** The landing and the invitations are light-only editorial surfaces. */
+export const viewport: Viewport = {
+  colorScheme: "light",
+  themeColor: "#fcf9f3",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${fraunces.variable} ${script.variable} h-full antialiased`}
+      className={`${displayFont.variable} ${bodyFont.variable} ${editorialFont.variable}`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="antialiased">
+        {children}
+        {process.env.NODE_ENV === "production" && <Analytics />}
+      </body>
     </html>
   );
 }

@@ -1,61 +1,73 @@
-import { siteConfig, whatsappLink } from "@/lib/content/site";
-import { ChatGlyph, InstagramGlyph, MailGlyph } from "./icons";
+import { ArrowUpRight, MessageCircle } from 'lucide-react'
 
-const whatsappMessage = `Hola, quiero información sobre las invitaciones digitales de ${siteConfig.name}.`;
-
-const linkClass =
-  "inline-flex items-center gap-3 text-sm text-ivory transition-colors duration-200 hover:text-gold";
+import { navLinks } from '@/lib/content/landing'
+import { site, whatsappUrl } from '@/lib/content/site'
 
 /**
- * Public footer. Admin routes are deliberately absent: `/admin` is private and
- * must never be advertised from a page guests can reach.
+ * Closing block: brand line, in-page links and the two contact channels.
+ * Email and Instagram hide themselves when `NEXT_PUBLIC_*` values are unset.
  */
 export function SiteFooter() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="bg-forest px-6 py-16 text-ivory sm:px-10">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="font-display text-lg tracking-[0.35em] uppercase">{siteConfig.name}</p>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-sage">
-            Invitaciones digitales para bodas en {siteConfig.country}. Hechas una por una, con la
-            historia de cada pareja.
+    <footer className="border-t border-line/50 bg-white">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-5 py-14 text-center md:flex-row md:px-8 md:text-left">
+        <div className="flex flex-col items-center gap-2 md:items-start">
+          <span className="font-display text-headline-md tracking-[0.2em] text-forest uppercase">
+            {site.name}
+          </span>
+          <p className="text-body-sm text-ink-soft/80">
+            © {new Date().getFullYear()} {site.name} · {site.tagline}
           </p>
         </div>
 
-        <div className="flex flex-col gap-4">
-          <a
-            href={whatsappLink(whatsappMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClass}
+        <div className="flex flex-col items-center gap-4 md:items-end">
+          <nav
+            aria-label="Enlaces del sitio"
+            className="flex flex-wrap justify-center gap-x-6 gap-y-3"
           >
-            <ChatGlyph className="h-4 w-4 text-gold" />
-            WhatsApp
-          </a>
-          <a
-            href={siteConfig.instagramUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={linkClass}
-          >
-            <InstagramGlyph className="h-4 w-4 text-gold" />
-            Instagram
-          </a>
-          <a href={`mailto:${siteConfig.contactEmail}`} className={linkClass}>
-            <MailGlyph className="h-4 w-4 text-gold" />
-            {siteConfig.contactEmail}
-          </a>
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-label-caps text-ink-soft uppercase transition-colors hover:text-forest"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex flex-wrap items-center justify-center gap-5 text-label-caps uppercase">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-forest transition-colors hover:text-gold-deep"
+            >
+              <MessageCircle className="size-3.5" strokeWidth={1.75} />
+              WhatsApp
+              <ArrowUpRight className="size-3.5" strokeWidth={1.75} />
+            </a>
+            {site.email ? (
+              <a
+                href={`mailto:${site.email}`}
+                className="text-ink-soft transition-colors hover:text-forest"
+              >
+                {site.email}
+              </a>
+            ) : null}
+            {site.instagram ? (
+              <a
+                href={site.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-ink-soft transition-colors hover:text-forest"
+              >
+                Instagram
+              </a>
+            ) : null}
+          </div>
         </div>
       </div>
-
-      <div className="mx-auto mt-12 flex w-full max-w-6xl flex-col gap-2 border-t border-ivory/15 pt-6 text-xs text-sage sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          © {year} {siteConfig.name}. Todos los derechos reservados.
-        </p>
-        <p>Hecho en {siteConfig.country}.</p>
-      </div>
     </footer>
-  );
+  )
 }

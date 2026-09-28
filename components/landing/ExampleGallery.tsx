@@ -1,86 +1,111 @@
-import Link from "next/link";
-import { galleryExamples, type GalleryExample } from "@/lib/content/landing";
-import { Reveal } from "./Reveal";
+import { ArrowRight, CircleCheck, Volume2 } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+
+import { PhotoPlate } from '@/components/landing/PhotoPlate'
+import { Reveal } from '@/components/landing/Reveal'
+import { SectionHeading } from '@/components/landing/SectionHeading'
+import { galleryExamples } from '@/lib/content/landing'
 
 /**
- * Previews are drawn with markup instead of screenshots so the section never
- * shows a broken image. Once an invitation is published, put its slug in
- * `galleryExamples` and the card turns into a real "Ver invitación" link.
+ * Three sample invitations.
+ *
+ * Cards point to `slug` only when that invitation is really published; while the
+ * slug is `null` the card shows a "Próximamente" note so no guest lands on a 404.
+ * The link goes through `next/link`, so navigation stays client-side (see
+ * AGENTS.md › Conventions).
  */
-function InvitationPreview({ example }: { example: GalleryExample }) {
-  return (
-    <article className="group">
-      <div className="border border-forest/15 bg-white p-3 transition-colors duration-300 group-hover:border-gold/60">
-        <div className="border border-gold/35 px-5 py-7 text-center">
-          <p className="font-script text-3xl leading-relaxed text-forest">
-            {example.couple}
-          </p>
-          <p className="mt-3 font-display text-xs tracking-[0.3em] text-forest/70">
-            {example.date}
-          </p>
-          <div className="mt-6 flex aspect-4/5 items-center justify-center border border-forest/10 bg-sage/25">
-            <span
-              aria-hidden
-              className="font-display text-[0.68rem] tracking-[0.18em] text-forest/50"
-            >
-              Foto de la pareja
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-5 flex items-baseline justify-between gap-4">
-        <p className="text-sm leading-relaxed text-forest/70">
-          {example.venue}
-        </p>
-        {example.slug ? (
-          <Link
-            href={`/${example.slug}`}
-            className="shrink-0 font-display text-sm text-forest underline decoration-gold underline-offset-4 transition-colors hover:text-forest/70"
-          >
-            Ver invitación
-          </Link>
-        ) : (
-          <span className="shrink-0 font-display text-sm text-forest/70">
-            Próximamente
-          </span>
-        )}
-      </div>
-    </article>
-  );
-}
-
 export function ExampleGallery() {
   return (
-    <section
-      id="ejemplos"
-      className="scroll-mt-8 bg-ivory px-6 py-20 sm:px-10 sm:py-28"
-    >
-      <div className="mx-auto w-full max-w-6xl">
-        <Reveal>
-          <h2 className="font-display text-3xl leading-tight text-forest sm:text-4xl">
-            Tres invitaciones, tres historias distintas
-          </h2>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-forest/70">
-            Ninguna invitación se repite: cada una se arma con las fotos, los
-            lugares y la canción de esa pareja. Estas son algunas de las que ya
-            salieron de casa.
-          </p>
-        </Reveal>
+    <section id="coleccion" className="border-y border-line/50 bg-paper/70 py-20 md:py-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHeading
+          eyebrow="Curadurías digitales"
+          title="Historias que cobran vida"
+          description="Cada pareja tiene una narrativa irrepetible. Diseñamos la identidad visual completa —música, mapas y confirmación sin fricción— alrededor de la suya."
+          className="mb-14 md:mb-16"
+        />
 
-        <div className="mt-14 grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {galleryExamples.map((example, index) => (
-            <Reveal
-              key={example.couple}
-              delay={index * 0.12}
-              /* the middle card drops a step so the row never reads as a table */
-              className={index === 1 ? "sm:mt-10 lg:mt-16" : undefined}
-            >
-              <InvitationPreview example={example} />
+            <Reveal key={example.couple} className="h-full" delay={index * 90}>
+              <article className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white gold-foil-border transition-transform duration-300 hover:-translate-y-1">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  {/* Real sample photo when the example ships one. `fill` + object-cover
+                      crop the 16:9 original to the card's 4:3 frame; the tonal plate
+                      remains the fallback for examples still without photography. */}
+                  {example.photo ? (
+                    <Image
+                      src={example.photo.src}
+                      alt={example.photo.alt}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <PhotoPlate
+                      tone={example.tone}
+                      monogram={example.monogram}
+                      className="h-full w-full transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                  )}
+                  <span className="absolute top-4 left-4 rounded-full border border-line/50 bg-white/90 px-3 py-1 text-label-caps text-forest uppercase backdrop-blur-sm">
+                    {example.style}
+                  </span>
+                  <span className="absolute right-4 bottom-4 inline-flex items-center gap-1.5 rounded-full bg-forest-soft px-3 py-1 text-label-caps text-sage-soft uppercase">
+                    <CircleCheck className="size-3" strokeWidth={2} />
+                    {example.badge}
+                  </span>
+                </div>
+
+                <div className="flex flex-1 flex-col justify-between gap-6 p-6">
+                  <div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-label-caps text-sage uppercase">{example.place}</span>
+                      <span className="inline-flex items-center gap-1.5 text-body-sm text-ink-soft/80">
+                        <Volume2 className="size-3.5 text-gold" strokeWidth={1.75} />
+                        {example.music}
+                      </span>
+                    </div>
+                    <h3 className="mt-3 font-display text-headline-md text-forest">
+                      {example.couple}
+                    </h3>
+                    <p className="mt-2 text-body-sm text-ink-soft">{example.description}</p>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 border-t border-line/50 pt-4">
+                    {example.slug ? (
+                      <Link
+                        href={`/${example.slug}`}
+                        className="inline-flex items-center gap-2 text-label-caps text-forest uppercase transition-colors hover:text-gold"
+                      >
+                        Ver invitación
+                        <ArrowRight
+                          className="size-4 transition-transform group-hover:translate-x-1"
+                          strokeWidth={1.75}
+                        />
+                      </Link>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 text-label-caps text-line-strong uppercase">
+                        <ArrowRight className="size-4" strokeWidth={1.75} />
+                        Próximamente
+                      </span>
+                    )}
+                    <span className="text-label-caps text-sage uppercase">Ejemplo</span>
+                  </div>
+                </div>
+              </article>
             </Reveal>
           ))}
         </div>
+
+        <Reveal className="mt-14 text-center">
+          <p className="mx-auto max-w-2xl font-editorial text-headline-sm text-sage italic">
+            ¿Tienes un concepto temático en mente? Lo maquetamos desde cero: cada invitación se
+            dibuja para una sola pareja.
+          </p>
+        </Reveal>
       </div>
     </section>
-  );
+  )
 }
